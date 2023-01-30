@@ -97,6 +97,7 @@ def listen(queue):
                 elif code == REL_X:
                     x, y = value, 0
                 else:
+                    assert code == REL_Y
                     x, y = 0, value
                 event = MoveEvent(x, y, time)
 
