@@ -64,6 +64,7 @@ button_by_code = {
     BTN_EXTRA: X2,
 }
 code_by_button = {button: code for code, button in button_by_code.items()}
+use_relative_movement = False
 
 device = None
 def build_device():
@@ -82,7 +83,6 @@ def listen(queue):
             continue
 
         event = None
-        arg = None
 
         if type == EV_KEY:
             event = ButtonEvent(DOWN if value else UP, button_by_code.get(code, '?'), time)
@@ -92,7 +92,12 @@ def listen(queue):
             if code == REL_WHEEL:
                 event = WheelEvent(value, time)
             elif code in (REL_X, REL_Y):
-                x, y = get_position()
+                if not use_relative_movement:
+                    x, y = get_position()
+                elif code == REL_X:
+                    x, y = value, 0
+                else:
+                    x, y = 0, value
                 event = MoveEvent(x, y, time)
 
         if event is None:
